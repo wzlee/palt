@@ -20,7 +20,7 @@
     <script type="text/javascript" src="jsLib/extjs/shared/options-toolbar.js"></script>
     <script type="text/javascript" src="jsLib/extjs/locale/ext-lang-zh_CN.js"></script>
     <!-- </x-bootstrap> -->
-    <script type="text/javascript" src="app/qservice.js"></script>
+    <script type="text/javascript" src="app/test.js"></script>
 </head>
 <body>
 
