@@ -299,6 +299,7 @@ Ext.define('plat.controller.service.ServiceController', {
             	afterrender:function(window){
             		var me = this;
             		window.down('button[action=submit]').on('click',function(){
+            			console.log(window.getComponent('serviceeditform').form.getValues());
             			window.getComponent('serviceeditform').form.updateRecord();
             			window.close();
             		});
