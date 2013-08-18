@@ -12,7 +12,8 @@ Ext.require([
 	'Ext.ux.GridComboBoxList',
 	'Ext.ux.DataView.DragSelector',
 	'Ext.ux.UploadPanel',
-	'Ext.ux.ComboBoxTree'
+	'Ext.ux.ComboBoxTree',
+	'Ext.ux.form.SearchField'
 ]);
 
 var plat = new Ext.application({

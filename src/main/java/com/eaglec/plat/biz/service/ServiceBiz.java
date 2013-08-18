@@ -37,6 +37,16 @@ public interface ServiceBiz {
 	public abstract Service save(Service service);
 	
 	/**
+	 * 保存服务(saveOrUpdate)
+	 *@author lizhiwei
+	 *@since 2013-8-15 
+	 *
+	 *@param service
+	 *@return Service
+	 */
+	public abstract Service update(Service service);
+	
+	/**
 	 * 根据id得到服务
 	 *@author Xiadi
 	 *@since 2013-8-12 

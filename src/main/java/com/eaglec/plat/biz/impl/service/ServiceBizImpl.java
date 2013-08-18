@@ -182,4 +182,9 @@ public class ServiceBizImpl implements ServiceBiz {
 			return jr;
 		}
 	}
+
+	@Override
+	public Service update(Service service) {
+		return serviceDao.update(service);
+	}
 }

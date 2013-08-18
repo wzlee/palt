@@ -8,26 +8,39 @@ Ext.define('plat.store.service.NServiceStore', {
         type: 'ajax',
      	actionMethods: {  
         	read: 'POST'
-            },
+        },
+        extraParams: {
+            currentStatus: "新服务','上架审核中"
+        },
         api:{  
 		    read:'service/query',  
 		    create:'service/save',  
 		    destroy:'service/delete',  
 		    update:'service/update'  
-      		},  
+  		},  
 		reader:{  
       		type: 'json',
 			root: 'data',
         	messageProperty:"message"  
-      		}, 
+  		}, 
 		writer:{  
 		    type:"json",  
-		    encode:true,  
-		    root:"service",  
-		    allowSingle:true  
+		    encode:true,
+		    root:"services",  
+		    allowSingle:false  
 		}
     },
-    autoSync:true,
+//    autoSync:true,
     folderSort: true,
-    sorters: [{property: 'id', direction: 'ASC'}]
+    sorters: [{property: 'id', direction: 'ASC'}],
+    listeners: {
+        beforeload: function(){
+            var params = store.getProxy().extraParams;
+            if (params.query) {
+                delete params.currentStatus;
+            } else {
+                params.currentStatus = "新服务','上架审核中";
+            }
+        }
+    }
 });

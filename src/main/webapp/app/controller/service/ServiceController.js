@@ -2,6 +2,7 @@ Ext.define('plat.controller.service.ServiceController', {
     extend: 'Ext.app.Controller',
     
     alias:'widget.servicecontroller',
+    
     stores: [
 				'service.ServiceStore',
 				'service.UServiceStore',
@@ -152,16 +153,15 @@ Ext.define('plat.controller.service.ServiceController', {
             'nservicegrid':{
             	afterrender:function(gridpanel){
             		console.log(gridpanel.title + '渲染完毕...');
-            		gridpanel.getStore().on('beforeload',function(store){
-            			Ext.apply(store.proxy.extraParams, {queryStatus:"新服务','上架审核中",serviceName:gridpanel.down('textfield[name=serviceName]').getValue()});
-            		});
             		gridpanel.down('button[action=search]').on('click',function(){
             			gridpanel.getStore().load();
 					},this);
 					gridpanel.down('button[action=add]').on('click',function(){
                 		this.addService();
 					},this);
-					
+					gridpanel.down('button[action=sync]').on('click',function(){
+                		gridpanel.getStore().sync();
+					},this);
         			gridpanel.down('textfield[name=serviceName]').on('specialkey',function(field,e){
         				if (e.getKey() == e.ENTER) {
         					if(!field.getValue()){
@@ -299,9 +299,38 @@ Ext.define('plat.controller.service.ServiceController', {
             	afterrender:function(window){
             		var me = this;
             		window.down('button[action=submit]').on('click',function(){
-            			console.log(window.getComponent('serviceeditform').form.getValues());
-            			window.getComponent('serviceeditform').form.updateRecord();
+//            			console.log(window.getComponent('serviceeditform').form.getValues());
+            			console.log(window.getComponent('serviceeditform').form.getRecord().get('serviceObject'));
+            			window.getComponent('serviceeditform').form.updateRecord(window.getComponent('serviceeditform').form.getRecord());
             			window.close();
+//            			window.getComponent('serviceeditform').form.submit({
+//				    		clientValidation: true,
+//						    url: 'service/edit',
+//						    params: {
+//						        action: 'edit'						        
+//						    },
+//						    success: function(form, action) {
+//						    	if(action.result.success){
+//							       Ext.example.msg('提示','<p align="center">'+action.result.message+'</p>');
+//							       window.hide();
+//							       me.refreshService();
+//						    	}else{
+//						    		Ext.Msg.alert('提示','<p align="center">'+action.result.message+'</p>');
+//						    	}
+//						    },
+//						    failure: function(form, action) {
+//						        switch (action.failureType) {
+//						            case Ext.form.action.Action.CLIENT_INVALID:
+//						                Ext.Msg.alert('Failure', '提交表单中包含非法字符(或必填项为空)！');
+//						                break;
+//						            case Ext.form.action.Action.CONNECT_FAILURE:
+//						                Ext.Msg.alert('Failure', 'Ajax请求失败');
+//						                break;
+//						            case Ext.form.action.Action.SERVER_INVALID:
+//						               Ext.Msg.alert('Failure', action.result.msg);
+//						       }
+//						    }
+//				    	});
             		});
             		window.down('button[action=reset]').on('click',function(){
             			window.getComponent('serviceeditform').form.reset()

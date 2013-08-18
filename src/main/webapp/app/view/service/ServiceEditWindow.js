@@ -112,7 +112,7 @@ Ext.define('plat.view.service.ServiceEditWindow', {
 				                    name:'category.id'
 				                },
 				                {
-				                    xtype: 'comboboxtree',
+				                    xtype: 'treepicker',
 				                    name:'category.text',
 				                    store: new Ext.data.TreeStore({
 			            				fields:['id','text','pid','leaf','idxtype'],
@@ -150,13 +150,10 @@ Ext.define('plat.view.service.ServiceEditWindow', {
 							                }  
 							            }  
 						            }),
-						            submitValue:'text',
-									pathValue:'text',
-									valueTarget:'hiddenfield[name=category.id]',
-									onlyLeaf:true,
 				                    width: 350,
 				                    allowBlank:false,
 				                    editable:false,
+				                    forceSelection :true,
 				                    emptyText:'请选择服务类别...',
 				                    fieldLabel: '服务类别'
 				                },

@@ -1,7 +1,7 @@
 Ext.define('plat.view.service.NServiceGrid',{
 	extend:'Ext.grid.Panel',
 	xtype:'nservicegrid',
-    
+   
 	title:'服务列表',
 	id:'xzfwgl',
 	closable:true,
@@ -12,8 +12,8 @@ Ext.define('plat.view.service.NServiceGrid',{
 				{xtype:'textfield',width:150,name:'serviceName',emptyText:'输入搜索关键字...'},'-',
 //				{xtype:'categorycombo',width:150,name:'category',emptyText:'输入选择类别...'},'-',
 				{iconCls:'icon-search',text:'查找',action:'search'},'-',
-				{iconCls:'icon-add',text:'添加',action:'add'},'-','双击服务可以查看服务详情哦！'
-//    					{xtype:'button',text:'显示分组',enableToggle:true,action:'group'},'-'
+				{iconCls:'icon-add',text:'添加',action:'add'},'-',
+				{iconCls:'icon-sync',text:'同步',action:'sync'},'-','双击服务可以查看服务详情哦！'
 	],
     initComponent: function() {
     	var me = this;
@@ -67,8 +67,10 @@ Ext.define('plat.view.service.NServiceGrid',{
 						                    var record = grid.getStore().getAt(rowIndex);
 						                    Ext.MessageBox.confirm('警告','确定删除【 '+record.data.serviceName+' 】吗?',function(btn){
 									    		if(btn == 'yes'){
-									    			grid.getStore().remove(record);
-														    			
+//									    			grid.getStore().remove(record);
+									    			record.set('lastStatus',record.data.currentStatus);
+													record.set('currentStatus',"已删除");
+													grid.getStore().sync();
 												}
 											});
 						                },
@@ -92,8 +94,9 @@ Ext.define('plat.view.service.NServiceGrid',{
 						                    var record = grid.getStore().getAt(rowIndex);
 						                    Ext.MessageBox.confirm('警告','确定申请上架【 '+record.data.serviceName+' 】吗?',function(btn){
 									    		if(btn == 'yes'){
+									    			record.set('lastStatus',record.data.currentStatus);
 									    			record.set('currentStatus',"上架审核中");
-									    			record.set('lastStatus',"新服务");
+									    			grid.getStore().sync();
 									    		}
 									    	});
 						                },
@@ -130,7 +133,18 @@ Ext.define('plat.view.service.NServiceGrid',{
 //	            )
 //		    }],
 //	    	features :[{ftype:'groupingsummary',id:'servicegroupingsummary',startCollapsed:true,groupHeaderTpl: '<font color="green">{name}</font> : 共[ <font color="green">{rows.length}</font> ]个服务'}],
-	    	dockedItems :[{
+	    	dockedItems :[
+	    					{
+					            dock: 'top',
+					            xtype: 'toolbar',
+					            items: {
+					                width: 400,
+					                fieldLabel: 'Search',
+					                labelWidth: 50,
+					                xtype: 'searchfield',
+					                store: 'service.NServiceStore'
+					            }
+					        }, {
 					        xtype: 'pagingtoolbar',
 					        store: 'service.NServiceStore',
 					        dock: 'bottom',

@@ -55,80 +55,6 @@ public class ServiceController extends BaseController {
 		}
 	}
 	
-
-	/**
-	 * 审核服务
-	 *@author liuliping
-	 *@since 2013-08-15 
-	 *
-	 *@param id 服务主键
-	 *@return access 服务审核:0通过,1未通过	 
-	 */
-	@RequestMapping(value = "/audit")
-	public void audit(Integer id, Integer access, 
-			HttpServletRequest request,HttpServletResponse response) {
-//		try {
-//			serviceBiz.save(service);
-//			this.outJson(response,new JSONResult(true,"服务保存成功!"));
-//			logger.info("[ "+service.getServiceName()+" ]保存成功!");
-//		} catch (Exception e) {
-//			this.outJson(response,new JSONResult(false,"服务保存失败!异常信息:"+e.getLocalizedMessage()));
-//			logger.info("服务保存失败!异常信息:"+e.getLocalizedMessage());
-//		}
-		JSONResult jr = serviceBiz.audit(id, access);
-		outJson(response, jr);
-	}
-
-	/**
-	 * 添加服务
-	 *@author pangyf
-	 *@since 2013-8-14 
-	 *
-	 *@param service
-	 *@return 
-	 */
-	@RequestMapping(value = "/update")
-	public void update(@RequestParam("service")Service service,HttpServletRequest request,HttpServletResponse response) {
-		logger.info("queryString:"+request.getQueryString());
-		try {
-			serviceBiz.save(service);
-			logger.info("[ "+service.getServiceName()+" ]保存成功!");
-			this.outJson(response,new JSONResult(true,"服务保存成功!"));
-		} catch (Exception e) {
-			this.outJson(response,new JSONResult(false,"服务保存失败!异常信息:"+e.getLocalizedMessage()));
-			logger.info("服务保存失败!异常信息:"+e.getLocalizedMessage());
-		}
-	}
-
-	/**
-	 * 
-	 * @author huyj
-	 * @sicen 2013-8-14
-	 * @description 更新服务内容
-	 * @param service
-	 *            服务对象
-	 * @param request
-	 * @param response
-	 */
-	@RequestMapping(value = "/updateComments")
-	public void updateComments(Service service, HttpServletRequest request,
-			HttpServletResponse response) {
-		Service oldService = serviceBiz.findServiceById(service.getId());
-		String current = oldService.getCurrentStatus();
-		service.setLastStatus(current);
-		service.setCurrentStatus(Constant.SERVICE_STATUS_CHANGE_AUDIT);
-		try {
-			serviceBiz.updateService(service);
-			logger.info("[ " + service.getServiceName() + " ]申请变更成功!");
-			this.outJson(response, new JSONResult(true, "服务申请变更成功!"));
-		} catch (Exception e) {
-			this.outJson(
-					response,
-					new JSONResult(false, "服务申请变更失败!异常信息:"
-							+ e.getLocalizedMessage()));
-		}
-	}
-
 	/**
 	 * 查询服务，按状态查询
 	 * 
@@ -151,30 +77,7 @@ public class ServiceController extends BaseController {
 				queryStatus, sname, start, limit));
 	}
 	
-	/**
-	 * 删除服务
-	 *@author lizhiwei
-	 *@since 2013-8-15 
-	 *
-	 *@param service
-	 *@return 
-	 */
-	@RequestMapping(value = "/delete")
-	public void delete(@RequestParam("services")String services,HttpServletRequest request,HttpServletResponse response) {
-		logger.info("queryString:"+request.getQueryString());
-		List<Service> list = JSON.parseArray(services, Service.class);
-		try {
-			for(Service service:list){
-				serviceBiz.delete(service);
-				logger.info("[ "+service.getServiceName()+" ]删除成功!");
-			}
-			this.outJson(response,new JSONResult(true,"服务删除成功!"));
-		} catch (Exception e) {
-			this.outJson(response,new JSONResult(false,"服务删除失败!异常信息:"+e.getLocalizedMessage()));
-			logger.info("服务删除失败!异常信息:"+e.getLocalizedMessage());
-		}
-	}
-	
+
 	/**
 	 * * 查询服务，按状态查询
 	 * 
@@ -202,5 +105,126 @@ public class ServiceController extends BaseController {
 		}
 		JSONData<Service> services = serviceBiz.queryStatistics(status, sname,start, limit);
 		this.outJson(response,services);
+	}
+	
+	/**
+	 * 服务编辑
+	 *@author pangyf
+	 *@since 2013-8-14 
+	 *
+	 *@param service
+	 *@return 
+	 */
+	@RequestMapping(value = "/edit")
+	public void update(Service service,HttpServletRequest request,HttpServletResponse response) {
+		logger.info("queryString:"+request.getQueryString());
+		try {
+			serviceBiz.save(service);
+			logger.info("[ "+service.getServiceName()+" ]编辑成功!");
+			this.outJson(response,new JSONResult(true,"服务编辑成功!"));
+		} catch (Exception e) {
+			this.outJson(response,new JSONResult(false,"服务编辑失败!异常信息:"+e.getLocalizedMessage()));
+			logger.info("服务编辑失败!异常信息:"+e.getLocalizedMessage());
+		}
+	}
+
+	/**
+	 * 服务更新(上下架,变更，删除)
+	 *@author pangyf
+	 *@since 2013-8-14 
+	 *
+	 *@param service
+	 *@return 
+	 */
+	@RequestMapping(value = "/update")
+	public void apply(@RequestParam("services")String services,HttpServletRequest request,HttpServletResponse response) {
+		logger.info("queryString:"+request.getQueryString());
+		List<Service> list = JSON.parseArray(services, Service.class);
+			try {
+				for(Service service:list){
+					serviceBiz.update(service);
+					logger.info("[ "+service.getServiceName()+" ]更新成功!");
+				}
+				this.outJson(response,new JSONResult(true,"服务更新成功!"));
+			} catch (Exception e) {
+				this.outJson(response,new JSONResult(false,"服务更新失败!异常信息:"+e.getLocalizedMessage()));
+				logger.info("服务更新失败!异常信息:"+e.getLocalizedMessage());
+			}
+	}
+	
+	/**
+	 * 删除服务
+	 *@author lizhiwei
+	 *@since 2013-8-15 
+	 *
+	 *@param service
+	 *@return 
+	 */
+	@RequestMapping(value = "/delete")
+	public void delete(@RequestParam("services")String services,HttpServletRequest request,HttpServletResponse response) {
+		logger.info("queryString:"+request.getQueryString());
+		List<Service> list = JSON.parseArray(services, Service.class);
+		try {
+			for(Service service:list){
+				serviceBiz.delete(service);
+				logger.info("[ "+service.getServiceName()+" ]删除成功!");
+			}
+			this.outJson(response,new JSONResult(true,"服务删除成功!"));
+		} catch (Exception e) {
+			this.outJson(response,new JSONResult(false,"服务删除失败!异常信息:"+e.getLocalizedMessage()));
+			logger.info("服务删除失败!异常信息:"+e.getLocalizedMessage());
+		}
+	}
+	
+	/**
+	 * 审核服务
+	 *@author liuliping
+	 *@since 2013-08-15 
+	 *
+	 *@param id 服务主键
+	 *@return access 服务审核:0通过,1未通过	 
+	 */
+	@RequestMapping(value = "/audit")
+	public void audit(Integer id, Integer access, 
+			HttpServletRequest request,HttpServletResponse response) {
+//		try {
+//			serviceBiz.save(service);
+//			this.outJson(response,new JSONResult(true,"服务保存成功!"));
+//			logger.info("[ "+service.getServiceName()+" ]保存成功!");
+//		} catch (Exception e) {
+//			this.outJson(response,new JSONResult(false,"服务保存失败!异常信息:"+e.getLocalizedMessage()));
+//			logger.info("服务保存失败!异常信息:"+e.getLocalizedMessage());
+//		}
+		JSONResult jr = serviceBiz.audit(id, access);
+		outJson(response, jr);
+	}
+	
+	/**
+	 * 
+	 * @author huyj
+	 * @sicen 2013-8-14
+	 * @description 更新服务内容
+	 * @param service
+	 *            服务对象
+	 * @param request
+	 * @param response
+	 */
+	@RequestMapping(value = "/updateComments")
+	public void updateComments(Service service, HttpServletRequest request,
+			HttpServletResponse response) {
+		Service oldService = serviceBiz.findServiceById(service.getId());
+		String current = oldService.getCurrentStatus();
+		service.setLastStatus(current);
+		service.setCurrentStatus(Constant.SERVICE_STATUS_CHANGE_AUDIT);
+		try {
+			serviceBiz.updateService(service);
+			logger.info("[ " + service.getServiceName() + " ]申请变更成功!");
+			this.outJson(response, new JSONResult(true, "服务申请变更成功!"));
+		} catch (Exception e) {
+			this.outJson(
+					response,
+					new JSONResult(false, "服务申请变更失败!异常信息:"
+							+ e.getLocalizedMessage()));
+		}
 	}
 }
